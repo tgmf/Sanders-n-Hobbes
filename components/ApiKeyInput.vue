@@ -5,7 +5,7 @@
   >
     <div class="w-full max-w-md mx-auto p-6">
       <h2 class="text-3xl font-bold mb-4">
-        Enter API Key
+        Enter OpenAI's API Key
       </h2>
       <p class="md:max-w-3/4 lg:max-w:1/4 mb-4">
         We are NOT saving using or sending your key anywhere but in this app, which runs only in your browser
