@@ -88,3 +88,7 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Other local configs
+.editorconfig
+.eslintrc.js
