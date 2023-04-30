@@ -1,6 +1,7 @@
 {
   "name": "Sanders-n-Hobbes",
   "version": "1.0.0",
+  "author": "tgmf <2.tagmf@gmail.com> (https://tgmf.st/)",
   "private": true,
   "scripts": {
     "dev": "nuxt",
