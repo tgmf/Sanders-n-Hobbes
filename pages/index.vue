@@ -133,7 +133,6 @@ export default {
   },
   methods: {
     setApiKey (apiKey) {
-      apiKey = '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'
       this.$axios.defaults.headers.common.Authorization = `Bearer ${apiKey}`
       this.$axios.setToken(apiKey, 'Bearer') // Add this line
     },
