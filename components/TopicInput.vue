@@ -3,7 +3,7 @@
     <label for="topic" class="text-sm font-medium">Topic:</label>
     <textarea
       id="topic"
-      v-model="topic"
+      v-model="localTopic"
       class="border-2 border-gray-300 rounded px-3 py-2"
       @input="saveTopic()"
     />
@@ -12,16 +12,22 @@
 
 <script>
 export default {
-  data () {
+  props: {
+    topic: String,
+  },
+  data() {
     return {
-      topic: ''
+      localTopic: this.topic,
+    };
+  },
+  watch: {
+    topic () {
+      this.localTopic = this.topic
     }
   },
   methods: {
-    saveTopic () {
-      this.$nextTick(() => {
-        this.$emit('update-topic', this.topic)
-      })
+    updateTopic () {
+      this.$emit("update-topic", this.localTopic)
     }
   }
 }

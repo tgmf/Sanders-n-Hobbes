@@ -31,7 +31,7 @@
       <AgentInput :agent="agents.agent1" @update-agent="updateAgent(1, $event)" />
       <AgentInput :agent="agents.agent2" @update-agent="updateAgent(2, $event)" />
     </div>
-    <TopicInput @update-topic="updateTopic" />
+    <TopicInput :topic="topic" @update-topic="updateTopic" />
     <div class="mt-4 sticky top-6">
       <ChatControls
         :ai-moderator="chatSettings.aiModerator"
