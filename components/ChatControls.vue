@@ -44,10 +44,17 @@ export default {
       localConversationActive: this.conversationActive
     }
   },
+  watch: {
+    conversationActive: {
+      handler (newVal) {
+        this.localConversationActive = newVal
+      }
+    }
+  },
   methods: {
     toggleConversation () {
       this.localConversationActive = !this.localConversationActive
-      this.$emit('toggle-conversation', this.localConversationActive)
+      this.$emit('toggle-conversation')
     },
     regenerateResponse () {
       this.$emit('regenerate-response')
