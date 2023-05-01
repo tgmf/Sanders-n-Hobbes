@@ -5,7 +5,7 @@
       id="topic"
       v-model="localTopic"
       class="border-2 border-gray-300 rounded px-3 py-2"
-      @input="saveTopic()"
+      @input="updateTopic()"
     />
   </div>
 </template>
