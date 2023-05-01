@@ -13,6 +13,7 @@
       <input
         :id="'name-' + agent.id"
         v-model="localAgent.name"
+        :disabled="disabled"
         type="text"
         class="border-2 border-gray-300 rounded px-3 py-2"
         @input="updateAgent()"
@@ -28,6 +29,7 @@
       <textarea
         :id="'personality-' + agent.id"
         v-model="localAgent.personality"
+        :disabled="disabled"
         class="border-2 border-gray-300 rounded px-3 py-2"
         @input="updateAgent()"
       />
@@ -41,6 +43,10 @@ export default {
     agent: {
       type: Object,
       required: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

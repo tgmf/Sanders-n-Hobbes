@@ -36,7 +36,7 @@
         :for="param.name"
         class="text-sm font-medium mt-4"
       >
-        {{ param.label }}: {{ settings[param.name] }}
+        {{ param.label }}: {{ param.type == 'number' ? "out of " + param.max : settings[param.name] }}
       </label>
       <input
         :id="param.name"

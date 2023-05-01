@@ -13,12 +13,15 @@
 <script>
 export default {
   props: {
-    topic: String,
+    topic: {
+      type: String,
+      default: ''
+    }
   },
-  data() {
+  data () {
     return {
-      localTopic: this.topic,
-    };
+      localTopic: this.topic
+    }
   },
   watch: {
     topic () {
@@ -27,7 +30,7 @@ export default {
   },
   methods: {
     updateTopic () {
-      this.$emit("update-topic", this.localTopic)
+      this.$emit('update-topic', this.localTopic)
     }
   }
 }

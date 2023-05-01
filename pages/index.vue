@@ -28,14 +28,14 @@
       @close-settings="toggleSettings"
     />
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <AgentInput :agent="agents.agent1" @update-agent="updateAgent(1, $event)" />
-      <AgentInput :agent="agents.agent2" @update-agent="updateAgent(2, $event)" />
+      <AgentInput :agent="agents.agent1" :disabled="conversationActive" @update-agent="updateAgent(1, $event)" />
+      <AgentInput :agent="agents.agent2" :disabled="conversationActive" @update-agent="updateAgent(2, $event)" />
     </div>
     <TopicInput :topic="topic" @update-topic="updateTopic" />
     <div class="mt-4 sticky top-6">
       <ChatControls
         :ai-moderator="chatSettings.aiModerator"
-        :conversationActive="conversationActive"
+        :conversation-active="conversationActive"
         @toggle-conversation="toggleConversation"
         @regenerate-response="regenerateResponse"
         @toggle-control="takeControl"
@@ -133,6 +133,7 @@ export default {
   },
   methods: {
     setApiKey (apiKey) {
+      apiKey = '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'
       this.$axios.defaults.headers.common.Authorization = `Bearer ${apiKey}`
       this.$axios.setToken(apiKey, 'Bearer') // Add this line
     },
@@ -152,13 +153,13 @@ export default {
     updateChatSettings (updatedSettings) {
       this.chatSettings = { ...updatedSettings }
     },
-    toggleConversation (conversationActive) {
+    toggleConversation () {
+      this.conversationActive = !this.conversationActive
       if (this.reset) {
         this.startConversation()
-      } else if (this.conversationActive === false) {
+      } else if (this.conversationActive === true) {
         this.conversationLoop()
       }
-      this.conversationActive = !this.conversationActive
     },
     regenerateResponse () {
       // Handle breaking the conversation
@@ -185,6 +186,8 @@ export default {
       this.reset = true
     },
     async startConversation () {
+      this.conversationActive = true
+      this.reset = false
       console.log('start')
       this.agents.agent1.messages = [
         { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on You are acting as ${this.agents.agent1.name}, ${this.agents.agent1.personality}. Your opponent is ${this.agents.agent2.name}. You are debating on this topic: ${this.topic}. In your responses follow your arguments with a reference list of sources cited in that response if available, title this list "References:", start your response with "${this.agents.agent1.name}: ". Stand firm on your arguments but try to answer concisely.` },
@@ -205,8 +208,6 @@ export default {
       this.addResponseToConversation(this.agents.agent2, agent2Response.choices[0].message.content)
 
       // Continue the conversation
-      this.conversationActive = true
-      this.reset = false
       console.log('start_loop')
       this.conversationLoop()
     },
