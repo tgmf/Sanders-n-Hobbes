@@ -8,7 +8,7 @@
         Enter OpenAI's API Key
       </h2>
       <p class="md:max-w-3/4 lg:max-w:1/4 mb-4">
-        We are NOT saving using or sending your key anywhere but in this app, which runs only in your browser
+        We are NOT saving or sending your key anywhere. We use it only in this session. It stays only in your browser
       </p>
       <div class="flex flex-col space-y-4">
         <label for="api-key" class="font-medium">
