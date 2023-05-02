@@ -121,7 +121,7 @@ export default {
           label: 'Max Tokens',
           type: 'number',
           min: 1,
-          max: 2048,
+          max: 4096,
           step: 1
         },
         {
