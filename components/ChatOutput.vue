@@ -10,9 +10,7 @@
       <details v-if="message.references.length && showReferences" class="text-sm text-blue-500 mt-2">
         <summary>References</summary>
         <ul>
-          <li v-for="reference in message.references" :key="reference" class="mt-2">
-            <a :href="reference" target="_blank" rel="noopener noreferrer">{{ reference }}</a>
-          </li>
+          <li v-for="reference in message.references" :key="reference" class="mt-2" v-html="linkify(reference)" />
         </ul>
       </details>
     </div>
@@ -29,6 +27,12 @@ export default {
     showReferences: {
       type: Boolean,
       deafult: true
+    }
+  },
+  methods: {
+    linkify (inputText) {
+      const urlPattern = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi //eslint-disable-line
+      return inputText.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer" class="underline">$1</a>')
     }
   }
 }

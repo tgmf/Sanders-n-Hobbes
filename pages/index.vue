@@ -36,10 +36,11 @@
       <ChatControls
         :ai-moderator="chatSettings.aiModerator"
         :conversation-active="conversationActive"
+        :reset="reset"
         @toggle-conversation="toggleConversation"
         @regenerate-response="regenerateResponse"
         @toggle-control="takeControl"
-        @reset="resetConversation"
+        @reset-conversation="resetConversation"
       />
     </div>
     <div class="max-h-full overflow-auto">
@@ -134,7 +135,7 @@ export default {
   methods: {
     setApiKey (apiKey) {
       this.$axios.defaults.headers.common.Authorization = `Bearer ${apiKey}`
-      this.$axios.setToken(apiKey, 'Bearer') // Add this line
+      this.$axios.setToken(apiKey, 'Bearer')
     },
     toggleApiKeyInput (visible) {
       this.apiKeyInputVisible = visible
@@ -189,25 +190,27 @@ export default {
       this.reset = false
       console.log('start')
       this.agents.agent1.messages = [
-        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on You are acting as ${this.agents.agent1.name}, ${this.agents.agent1.personality}. Your opponent is ${this.agents.agent2.name}. You are debating on this topic: ${this.topic}. In your responses follow your arguments with a reference list of sources cited in that response if available, title this list "References:", start your response with "${this.agents.agent1.name}: ". Stand firm on your arguments but try to answer concisely.` },
+        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on you are acting as ${this.agents.agent1.name}, ${this.agents.agent1.personality}. Your opponent is ${this.agents.agent2.name}. You are debating on this topic: ${this.topic}. In your responses follow your arguments with a reference list of sources cited in that response if available, title this list "References:", start your response with "${this.agents.agent1.name}: ". Defent your arguments but try to answer concisely and be dialictic.` },
         { role: 'user', content: `${this.agents.agent1.name}: ` }
       ]
       this.agents.agent2.messages = [
-        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on You are acting as You are ${this.agents.agent2.name}, ${this.agents.agent2.personality}. Your opponent is ${this.agents.agent1.name}. You are debating on this topic: ${this.topic}. In your responses follow your arguments with a reference list of sources cited in that response if available, title this list "References:", start your response with "${this.agents.agent2.name}: ". Stand firm on your arguments but try to answer concisely.` }
+        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on you are acting as You are ${this.agents.agent2.name}, ${this.agents.agent2.personality}. Your opponent is ${this.agents.agent1.name}. You are debating on this topic: ${this.topic}. In your responses follow your arguments with a reference list of sources cited in that response if available, title this list "References:", start your response with "${this.agents.agent2.name}: ". Defent your arguments but try to answer concisely and be dialictic.` }
       ]
       this.agents.agent3.messages = [
-        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on You are acting as a moderator in public debates. ${this.agents.agent1.name} and ${this.agents.agent1.name} are debating on this topic: ${this.topic}. Control the flow of discussion so the debaters would not go of topic or ask specifying questions.` }
+        { role: this.chatSettings.model === 'gpt-4' ? 'system' : 'user', content: `From now on you are acting as a moderator in public debates. ${this.agents.agent1.name} and ${this.agents.agent1.name} are debating on this topic: ${this.topic}. Control the flow of discussion so the debaters would not go of topic or ask specifying questions.` }
       ]
       // Prompt the first agent
       const agent1Response = await this.promptAgent(this.agents.agent1)
+      if (this.conversationActive === false) { return }
       this.addResponseToConversation(this.agents.agent1, agent1Response.choices[0].message.content)
+      if (this.conversationActive === false) { return }
 
       // Prompt the second agent
       const agent2Response = await this.promptAgent(this.agents.agent2)
+      if (this.conversationActive === false) { return }
       this.addResponseToConversation(this.agents.agent2, agent2Response.choices[0].message.content)
-
+      if (this.conversationActive === false) { return }
       // Continue the conversation
-      console.log('start_loop')
       this.conversationLoop()
     },
     async promptAgent (agent) {
@@ -240,7 +243,9 @@ export default {
         let references = []
         if (referenceMatch) {
           references = referenceMatch[1].trim().split(/\n\s*\d+\.\s*/)
-          references.shift() // Remove the first empty item caused by the split
+          if (references[0] === '') {
+            references.shift() // Remove the first empty item caused by the split
+          }
         }
 
         const messageWithoutReferences = messageContent.replace(referenceRegex, '').trim()
@@ -264,15 +269,17 @@ export default {
     },
     async conversationLoop () {
       for (let i = 0; i < this.chatSettings.consequent_responses; i++) {
+        if (this.conversationActive === false) { return }
+        console.log('start_loop')
         // Prompt the first agent
-        if (this.conversationActive === true) {
-          const agent1Response = await this.promptAgent(this.agents.agent1)
-          this.addResponseToConversation(this.agents.agent1, agent1Response.choices[0].message.content)
-
-          // Prompt the second agent
-          const agent2Response = await this.promptAgent(this.agents.agent2)
-          this.addResponseToConversation(this.agents.agent2, agent2Response.choices[0].message.content)
-        }
+        const agent1Response = await this.promptAgent(this.agents.agent1)
+        if (this.conversationActive === false) { return }
+        this.addResponseToConversation(this.agents.agent1, agent1Response.choices[0].message.content)
+        if (this.conversationActive === false) { return }
+        // Prompt the second agent
+        const agent2Response = await this.promptAgent(this.agents.agent2)
+        if (this.conversationActive === false) { return }
+        this.addResponseToConversation(this.agents.agent2, agent2Response.choices[0].message.content)
       }
       this.conversationActive = false
     },
